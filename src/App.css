@@ -1,0 +1,185 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: #fdf6f0;
+  color: #2e2a26;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #ecdfd3;
+}
+
+header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+nav button {
+  border: none;
+  background: #f1e4d6;
+  color: #6b5a48;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+nav button.active {
+  background: #d98a6c;
+  color: white;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1.25rem;
+}
+
+.name-card {
+  width: 100%;
+  background: white;
+  border-radius: 18px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 8px 24px rgba(120, 90, 60, 0.12);
+  text-align: center;
+}
+
+.name-card h1 {
+  font-size: 2.4rem;
+  margin: 0 0 0.25rem;
+  color: #ad5a3a;
+}
+
+.pronunciation {
+  color: #9c8a78;
+  font-style: italic;
+  margin: 0 0 1rem;
+}
+
+.meaning {
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem;
+}
+
+.source {
+  color: #6b5a48;
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #f1e4d6;
+  color: #6b5a48;
+}
+
+.badge.warn {
+  background: #fbe3d8;
+  color: #b5502c;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.actions button {
+  flex: 1;
+  padding: 0.75rem 0.5rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.actions .bin {
+  background: #f1d6d6;
+  color: #9c3b3b;
+}
+
+.actions .more {
+  background: #f1e4d6;
+  color: #8a6a3a;
+}
+
+.actions .keep {
+  background: #d6ead9;
+  color: #2f6b3a;
+}
+
+.queue-count {
+  color: #9c8a78;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
+
+.empty {
+  color: #9c8a78;
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.shortlist {
+  width: 100%;
+  align-items: stretch;
+}
+
+.shortlist-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.6rem;
+  box-shadow: 0 2px 8px rgba(120, 90, 60, 0.08);
+}
+
+.shortlist-item strong {
+  font-size: 1.1rem;
+  color: #ad5a3a;
+}
+
+.shortlist-item button {
+  border: none;
+  background: #f1d6d6;
+  color: #9c3b3b;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
