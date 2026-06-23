@@ -1,111 +1,78 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+/* ------------------------------------------------------------------ *
+ * Niyam Consulting — design tokens & global styles
+ *
+ * The palette is driven entirely by CSS custom properties so the brand
+ * can swap themes by setting `data-theme` on <html>. Clay is the default.
+ * Corner radius is a token too: --radius (16px Soft / 3px Sharp).
+ * ------------------------------------------------------------------ */
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+:root,
+:root[data-theme="clay"] {
+  --bg: #faf7f2;
+  --surface: #fffefb;
+  --ink: #221e18;
+  --muted: #6f665a;
+  --line: #e8e1d6;
+  --accent: #b35f3c; /* sRGB fallback */
+  --accent-ink: #fffdf9;
+  --accent-soft: #f1e4da;
+  --radius: 16px;
+}
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root[data-theme="sage"] {
+  --bg: #f4f6f1;
+  --surface: #fffffc;
+  --ink: #1a201a;
+  --muted: #5f6a5c;
+  --line: #e0e5da;
+  --accent: #4f7a5c; /* sRGB fallback */
+  --accent-ink: #fbfffb;
+  --accent-soft: #e3ece2;
+}
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+:root[data-theme="indigo"] {
+  --bg: #f3f3ef;
+  --surface: #fffffd;
+  --ink: #1a1d27;
+  --muted: #5e6270;
+  --accent: #4a52a8; /* sRGB fallback */
+  --line: #e2e2dc;
+  --accent-ink: #fbfcff;
+  --accent-soft: #e4e6ef;
+}
+
+/* Wider-gamut accents where oklch() is supported. */
+@supports (color: oklch(0.6 0.11 50)) {
+  :root,
+  :root[data-theme="clay"] {
+    --accent: oklch(0.6 0.11 50);
+  }
+  :root[data-theme="sage"] {
+    --accent: oklch(0.55 0.085 158);
+  }
+  :root[data-theme="indigo"] {
+    --accent: oklch(0.54 0.1 262);
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+* {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Newsreader", Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+::selection {
+  background: var(--accent-soft);
 }
