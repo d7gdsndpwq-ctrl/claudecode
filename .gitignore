@@ -12,6 +12,21 @@ dist
 dist-ssr
 *.local
 
+# Secrets & credentials — never commit these to a public repo.
+# If you wire the contact form to a backend, keep keys in env files only.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.json
+credentials.json
+.netrc
+.npmrc
+*.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
