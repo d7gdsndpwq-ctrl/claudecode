@@ -30,10 +30,18 @@ Corner style is the `--radius` token (`16px` Soft default, `3px` Sharp).
 
 ## Contact form
 
-The form (`src/App.tsx`) validates on the client and shows a success panel, but
-the submit is **not wired to a backend** — it just flips to the success state.
-To receive enquiries, POST the form payload to your inbox/CRM in `handleSubmit`.
-Honour the "details stay with us" promise wherever it lands.
+The form (`src/App.tsx`) validates on the client, then POSTs each enquiry to a
+**Google Apps Script web app** that appends a row to a Google Sheet you own — no
+third-party form service, no data held by the site. Setup is a one-time, ~5-min
+job documented in [`google-apps-script/README.md`](./google-apps-script/README.md):
+deploy the script, then paste its `/exec` URL into `FORM_ENDPOINT` in
+`src/App.tsx`.
+
+Until `FORM_ENDPOINT` is set, the form still works for visitors but submissions
+aren't delivered anywhere (a console warning makes this obvious in dev). The
+form includes a honeypot anti-spam field and a fallback email
+(`FALLBACK_EMAIL`) shown if the network request fails, so a lead is never
+silently lost.
 
 ## Deployment (GitHub Pages)
 

@@ -26,8 +26,10 @@ Out of scope:
 
 - Anything hosted elsewhere or operated by third parties (e.g. GitHub itself,
   the DNS registrar, font/CDN providers).
-- The contact form does not currently submit to a backend; it validates input
-  in the browser only. No submitted data leaves the visitor's browser.
+- The contact form submits to a Google Apps Script web app that the site owner
+  controls, which stores enquiries in a private Google Sheet. The website itself
+  stores nothing. Anything beyond that endpoint (Google's infrastructure, the
+  Sheet's sharing settings) is operated by the owner/Google, not this repo.
 
 ## Good practice for contributors
 

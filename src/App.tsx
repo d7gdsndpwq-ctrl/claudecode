@@ -111,6 +111,19 @@ const STEPS = [
 
 const SECTORS = ["Accountancy", "Legal", "Financial services", "Healthcare", "Property", "Professional services"];
 
+/* Where contact-form submissions are sent.
+ *
+ * Paste the deployed Google Apps Script web-app URL here (see
+ * google-apps-script/README.md for the 5-minute setup). It ends in
+ * "/exec". While this is empty the form still works for visitors but
+ * submissions are NOT delivered anywhere — a warning is logged so it is
+ * obvious in development. Set it before going live. */
+const FORM_ENDPOINT = "";
+
+/* Address shown to visitors if the network request fails, so a lead is
+ * never lost to a transient error. */
+const FALLBACK_EMAIL = "hello@niyamconsulting.com.au";
+
 /* Form state --------------------------------------------------------- */
 
 interface FormState {
@@ -142,14 +155,27 @@ function App() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [submittedName, setSubmittedName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  // Honeypot: a hidden field real people never see or fill. A filled value
+  // almost always means a bot, so we drop the submission silently.
+  const [botField, setBotField] = useState("");
 
   function setField(key: keyof FormState, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
     setErrors((e) => ({ ...e, [key]: "" }));
   }
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    // Silently swallow obvious bot submissions.
+    if (botField) {
+      setSubmittedName(form.name.trim().split(" ")[0] || "there");
+      setSubmitted(true);
+      return;
+    }
+
     const next: FormErrors = {};
     if (!form.name.trim()) next.name = "Please add your name.";
     if (!form.firm.trim()) next.firm = "Which company?";
@@ -160,10 +186,44 @@ function App() {
       setErrors(next);
       return;
     }
-    // Backend not wired: a real deployment should POST this to a CRM or
-    // inbox. Honour the "details stay with us" promise wherever it lands.
-    setSubmittedName(form.name.trim().split(" ")[0]);
-    setSubmitted(true);
+
+    setSubmitError("");
+    setSubmitting(true);
+    try {
+      if (FORM_ENDPOINT) {
+        const res = await fetch(FORM_ENDPOINT, {
+          method: "POST",
+          // text/plain keeps this a "simple" request, so the browser skips
+          // the CORS preflight that Apps Script web apps can't answer.
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            name: form.name.trim(),
+            firm: form.firm.trim(),
+            email: form.email.trim(),
+            sector: form.sector,
+            step: form.step,
+            note: form.note.trim(),
+            page: typeof window !== "undefined" ? window.location.href : "",
+          }),
+        });
+        if (!res.ok) throw new Error(`Submission failed: ${res.status}`);
+      } else {
+        // No endpoint configured yet — make that loud rather than losing data.
+        console.warn(
+          "FORM_ENDPOINT is empty: this enquiry was not delivered anywhere. " +
+            "Set FORM_ENDPOINT in src/App.tsx before going live.",
+        );
+      }
+      setSubmittedName(form.name.trim().split(" ")[0]);
+      setSubmitted(true);
+    } catch (err) {
+      console.error(err);
+      setSubmitError(
+        `Sorry — something went wrong sending that. Please email us directly at ${FALLBACK_EMAIL} and we'll pick it up.`,
+      );
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function handleReset() {
@@ -171,6 +231,8 @@ function App() {
     setErrors({});
     setSubmitted(false);
     setSubmittedName("");
+    setSubmitError("");
+    setBotField("");
   }
 
   return (
@@ -738,9 +800,23 @@ function App() {
                     style={{ ...fieldStyle, resize: "vertical" }}
                   />
                 </label>
+                {/* Honeypot — hidden from people, catnip for bots. */}
+                <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}>
+                  <label>
+                    Leave this field empty
+                    <input
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={botField}
+                      onChange={(e) => setBotField(e.target.value)}
+                    />
+                  </label>
+                </div>
                 <button
                   type="submit"
                   className="niyam-cta"
+                  disabled={submitting}
                   style={{
                     marginTop: "4px",
                     fontFamily: FONT_UI,
@@ -751,11 +827,17 @@ function App() {
                     border: "none",
                     padding: "15px 24px",
                     borderRadius: "var(--radius)",
-                    cursor: "pointer",
+                    cursor: submitting ? "progress" : "pointer",
+                    opacity: submitting ? 0.7 : 1,
                   }}
                 >
-                  Book your free call
+                  {submitting ? "Sending…" : "Book your free call"}
                 </button>
+                {submitError && (
+                  <p role="alert" style={{ ...errorText, fontSize: "14px", lineHeight: 1.5, margin: "2px 0 0" }}>
+                    {submitError}
+                  </p>
+                )}
                 <p style={{ fontSize: "13px", lineHeight: 1.5, color: "var(--muted)", margin: "2px 0 0", fontFamily: FONT_SERIF }}>
                   We'll reply within a working day. Your details stay with us, and only us. That's rather the point.
                 </p>
