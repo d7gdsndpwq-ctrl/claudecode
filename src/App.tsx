@@ -1,4 +1,4 @@
-import { type CSSProperties } from "react";
+import { useState, type CSSProperties, type FormEvent } from "react";
 import "./App.css";
 
 const FONT_UI = "'Hanken Grotesk', sans-serif";
@@ -21,6 +21,32 @@ const regCard: CSSProperties = {
   border: "1px solid var(--line)",
   borderRadius: "calc(var(--radius) + 2px)",
   padding: "26px",
+};
+
+const fieldStyle: CSSProperties = {
+  fontFamily: FONT_SERIF,
+  fontSize: "16px",
+  padding: "12px 14px",
+  border: "1px solid var(--line)",
+  borderRadius: "var(--radius)",
+  background: "var(--bg)",
+  color: "var(--ink)",
+};
+
+const fieldLabel: CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "7px",
+  fontSize: "13px",
+  fontWeight: 600,
+  color: "var(--ink)",
+  fontFamily: FONT_UI,
+};
+
+const errorText: CSSProperties = {
+  fontWeight: 400,
+  color: "var(--accent)",
+  fontSize: "12px",
 };
 
 const chip: CSSProperties = {
@@ -85,10 +111,81 @@ const STEPS = [
 
 const SECTORS = ["Accountancy", "Legal", "Financial services", "Healthcare", "Property", "Professional services"];
 
-// Paste your Google Form embed src here (Send → Embed → copy the src URL).
-const GOOGLE_FORM_SRC = "https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?embedded=true";
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/mbdvynqb";
+
+interface FormState {
+  name: string;
+  firm: string;
+  email: string;
+  sector: string;
+  step: string;
+  note: string;
+}
+
+interface FormErrors {
+  name?: string;
+  firm?: string;
+  email?: string;
+}
+
+const EMPTY_FORM: FormState = {
+  name: "",
+  firm: "",
+  email: "",
+  sector: "accountancy",
+  step: "call",
+  note: "",
+};
 
 function App() {
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submittedName, setSubmittedName] = useState("");
+
+  function setField(key: keyof FormState, value: string) {
+    setForm((f) => ({ ...f, [key]: value }));
+    setErrors((e) => ({ ...e, [key]: "" }));
+  }
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const next: FormErrors = {};
+    if (!form.name.trim()) next.name = "Please add your name.";
+    if (!form.firm.trim()) next.firm = "Which company?";
+    if (!form.email.trim()) next.email = "We need an email to reply.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
+      next.email = "That email looks off.";
+    if (Object.keys(next).length) {
+      setErrors(next);
+      return;
+    }
+    setSubmitting(true);
+    await fetch(FORMSPREE_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        name: form.name.trim(),
+        firm: form.firm.trim(),
+        email: form.email.trim(),
+        sector: form.sector,
+        next_step: form.step,
+        note: form.note.trim(),
+      }),
+    });
+    setSubmitting(false);
+    setSubmittedName(form.name.trim().split(" ")[0]);
+    setSubmitted(true);
+  }
+
+  function handleReset() {
+    setForm(EMPTY_FORM);
+    setErrors({});
+    setSubmitted(false);
+    setSubmittedName("");
+  }
+
   return (
     <div style={{ background: "var(--bg)", color: "var(--ink)", fontFamily: FONT_SERIF, minHeight: "100vh" }}>
       {/* HEADER ------------------------------------------------------- */}
@@ -565,22 +662,168 @@ function App() {
               background: "var(--surface)",
               border: "1px solid var(--line)",
               borderRadius: "calc(var(--radius) + 6px)",
-              overflow: "hidden",
+              padding: "36px",
               boxShadow: "0 24px 60px -34px rgba(40,30,20,0.35)",
             }}
           >
-            <iframe
-              src={GOOGLE_FORM_SRC}
-              title="Contact form"
-              width="100%"
-              height="680"
-              frameBorder="0"
-              marginHeight={0}
-              marginWidth={0}
-              style={{ display: "block", border: "none" }}
-            >
-              Loading…
-            </iframe>
+            {!submitted ? (
+              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px", fontFamily: FONT_UI }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                  <label style={fieldLabel}>
+                    Your name
+                    <input
+                      className="niyam-field"
+                      type="text"
+                      value={form.name}
+                      onChange={(e) => setField("name", e.target.value)}
+                      placeholder="Jane Smith"
+                      style={fieldStyle}
+                    />
+                    {errors.name && <span style={errorText}>{errors.name}</span>}
+                  </label>
+                  <label style={fieldLabel}>
+                    Company name
+                    <input
+                      className="niyam-field"
+                      type="text"
+                      value={form.firm}
+                      onChange={(e) => setField("firm", e.target.value)}
+                      placeholder="Acme Ltd"
+                      style={fieldStyle}
+                    />
+                    {errors.firm && <span style={errorText}>{errors.firm}</span>}
+                  </label>
+                </div>
+                <label style={fieldLabel}>
+                  Work email
+                  <input
+                    className="niyam-field"
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => setField("email", e.target.value)}
+                    placeholder="jane@acme.co.uk"
+                    style={fieldStyle}
+                  />
+                  {errors.email && <span style={errorText}>{errors.email}</span>}
+                </label>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                  <label style={fieldLabel}>
+                    Sector
+                    <select
+                      className="niyam-field"
+                      value={form.sector}
+                      onChange={(e) => setField("sector", e.target.value)}
+                      style={fieldStyle}
+                    >
+                      <option value="accountancy">Accountancy</option>
+                      <option value="legal">Legal</option>
+                      <option value="financial">Financial services</option>
+                      <option value="healthcare">Healthcare</option>
+                      <option value="property">Property</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </label>
+                  <label style={fieldLabel}>
+                    Right next step?
+                    <select
+                      className="niyam-field"
+                      value={form.step}
+                      onChange={(e) => setField("step", e.target.value)}
+                      style={fieldStyle}
+                    >
+                      <option value="call">A quick intro call</option>
+                      <option value="seminar">An in-house seminar</option>
+                      <option value="assessment">A Risk &amp; Governance Review</option>
+                      <option value="unsure">Not sure yet</option>
+                    </select>
+                  </label>
+                </div>
+                <label style={fieldLabel}>
+                  <span>
+                    Anything you're worried about? <span style={{ fontWeight: 400, color: "var(--muted)" }}>(optional)</span>
+                  </span>
+                  <textarea
+                    className="niyam-field"
+                    value={form.note}
+                    onChange={(e) => setField("note", e.target.value)}
+                    rows={3}
+                    placeholder="e.g. staff already using ChatGPT with client data"
+                    style={{ ...fieldStyle, resize: "vertical" }}
+                  />
+                </label>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="niyam-cta"
+                  style={{
+                    marginTop: "4px",
+                    fontFamily: FONT_UI,
+                    fontSize: "16px",
+                    fontWeight: 600,
+                    background: "var(--accent)",
+                    color: "var(--accent-ink)",
+                    border: "none",
+                    padding: "15px 24px",
+                    borderRadius: "var(--radius)",
+                    cursor: submitting ? "default" : "pointer",
+                    opacity: submitting ? 0.7 : 1,
+                  }}
+                >
+                  {submitting ? "Sending…" : "Book your free call"}
+                </button>
+                <p style={{ fontSize: "13px", lineHeight: 1.5, color: "var(--muted)", margin: "2px 0 0", fontFamily: FONT_SERIF }}>
+                  We'll reply within a working day. Your details stay with us, and only us. That's rather the point.
+                </p>
+              </form>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "18px", padding: "20px 0", fontFamily: FONT_UI }}>
+                <span
+                  style={{
+                    width: "52px",
+                    height: "52px",
+                    borderRadius: "50%",
+                    background: "var(--accent)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <span
+                    style={{
+                      width: "18px",
+                      height: "10px",
+                      borderLeft: "3px solid var(--accent-ink)",
+                      borderBottom: "3px solid var(--accent-ink)",
+                      transform: "rotate(-45deg)",
+                      marginTop: "-4px",
+                    }}
+                  />
+                </span>
+                <h3 style={{ fontWeight: 700, fontSize: "26px", letterSpacing: "-0.01em", margin: 0 }}>
+                  Thanks, {submittedName}. That's in.
+                </h3>
+                <p style={{ fontFamily: FONT_SERIF, fontSize: "18px", lineHeight: 1.6, color: "var(--muted)", margin: 0, maxWidth: "40ch" }}>
+                  We'll be in touch within a working day to find a time that suits. No prep needed on your end.
+                </p>
+                <button
+                  onClick={handleReset}
+                  className="niyam-link"
+                  style={{
+                    background: "transparent",
+                    border: "1px solid var(--line)",
+                    fontFamily: FONT_UI,
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    padding: "11px 18px",
+                    borderRadius: "var(--radius)",
+                    cursor: "pointer",
+                    color: "var(--ink)",
+                  }}
+                >
+                  Send another
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>
