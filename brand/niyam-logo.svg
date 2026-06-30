@@ -1,0 +1,103 @@
+<svg width="1100" height="760" viewBox="0 0 1100 760" xmlns="http://www.w3.org/2000/svg" font-family="'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <!-- Reusable icon: navy compass star with gold north point -->
+    <g id="mark">
+      <!-- thin open ring -->
+      <circle cx="60" cy="60" r="56" fill="none" stroke="#C9A24B" stroke-width="2.5" stroke-dasharray="240 64" stroke-linecap="round" transform="rotate(-45 60 60)"/>
+      <!-- four-point star body (navy) -->
+      <polygon points="60,12 69.9,50.1 108,60 69.9,69.9 60,108 50.1,69.9 12,60 50.1,50.1"
+               fill="#16243F"/>
+      <!-- north point in gold -->
+      <polygon points="50.1,50.1 60,12 69.9,50.1" fill="#C9A24B"/>
+      <!-- small center node -->
+      <circle cx="60" cy="60" r="5.2" fill="#C9A24B"/>
+    </g>
+
+    <!-- Reversed (light) version of the mark for dark backgrounds -->
+    <g id="mark-rev">
+      <circle cx="60" cy="60" r="56" fill="none" stroke="#C9A24B" stroke-width="2.5" stroke-dasharray="240 64" stroke-linecap="round" transform="rotate(-45 60 60)"/>
+      <polygon points="60,12 69.9,50.1 108,60 69.9,69.9 60,108 50.1,69.9 12,60 50.1,50.1"
+               fill="#FFFFFF"/>
+      <polygon points="50.1,50.1 60,12 69.9,50.1" fill="#C9A24B"/>
+      <circle cx="60" cy="60" r="5.2" fill="#16243F"/>
+    </g>
+
+    <!-- Monochrome mark -->
+    <g id="mark-mono">
+      <circle cx="60" cy="60" r="56" fill="none" stroke="#222222" stroke-width="2.5" stroke-dasharray="240 64" stroke-linecap="round" transform="rotate(-45 60 60)"/>
+      <polygon points="60,12 69.9,50.1 108,60 69.9,69.9 60,108 50.1,69.9 12,60 50.1,50.1" fill="#222222"/>
+      <polygon points="50.1,50.1 60,12 69.9,50.1" fill="#7a7a7a"/>
+      <circle cx="60" cy="60" r="5.2" fill="#ffffff"/>
+    </g>
+  </defs>
+
+  <!-- background -->
+  <rect width="1100" height="760" fill="#F7F8FA"/>
+
+  <!-- header -->
+  <text x="60" y="60" font-size="15" letter-spacing="3" fill="#9aa3b2">NIYAM CONSULTING — LOGO SYSTEM</text>
+  <line x1="60" y1="78" x2="1040" y2="78" stroke="#E2E6EC" stroke-width="1"/>
+
+  <!-- PRIMARY HORIZONTAL LOCKUP -->
+  <g transform="translate(60,120)">
+    <use href="#mark" transform="scale(0.95)"/>
+    <g transform="translate(150,18)">
+      <text x="0" y="40" font-size="56" font-weight="600" letter-spacing="1" fill="#16243F">Niyam</text>
+      <text x="3" y="74" font-size="20" font-weight="400" letter-spacing="11" fill="#C9A24B">CONSULTING</text>
+    </g>
+  </g>
+
+  <line x1="60" y1="280" x2="1040" y2="280" stroke="#E2E6EC" stroke-width="1"/>
+
+  <!-- STACKED LOCKUP -->
+  <g transform="translate(120,320)">
+    <use href="#mark" transform="translate(40,0) scale(0.85)"/>
+    <text x="78" y="155" font-size="40" font-weight="600" text-anchor="middle" fill="#16243F">Niyam</text>
+    <text x="80" y="183" font-size="14" font-weight="400" letter-spacing="8" text-anchor="middle" fill="#C9A24B">CONSULTING</text>
+  </g>
+
+  <!-- ICON ONLY (navy tile, reversed) -->
+  <g transform="translate(430,320)">
+    <rect x="0" y="0" width="200" height="200" rx="20" fill="#16243F"/>
+    <use href="#mark-rev" transform="translate(40,40) scale(1.0)"/>
+  </g>
+
+  <!-- ICON ONLY (light tile) -->
+  <g transform="translate(660,320)">
+    <rect x="0" y="0" width="200" height="200" rx="20" fill="#FFFFFF" stroke="#E2E6EC"/>
+    <use href="#mark" transform="translate(40,40) scale(1.0)"/>
+  </g>
+
+  <!-- MONOCHROME small lockup -->
+  <g transform="translate(880,355)">
+    <use href="#mark-mono" transform="scale(0.6)"/>
+    <text x="84" y="38" font-size="30" font-weight="600" fill="#222222">Niyam</text>
+    <text x="86" y="58" font-size="11" font-weight="400" letter-spacing="6" fill="#666666">CONSULTING</text>
+  </g>
+
+  <!-- COLOR SWATCHES -->
+  <g transform="translate(60,580)">
+    <text x="0" y="0" font-size="13" letter-spacing="2" fill="#9aa3b2">PALETTE</text>
+    <g transform="translate(0,18)">
+      <rect x="0"   y="0" width="120" height="70" rx="8" fill="#16243F"/>
+      <text x="10" y="92" font-size="12" fill="#16243F" font-weight="600">Deep Navy</text>
+      <text x="10" y="108" font-size="11" fill="#9aa3b2">#16243F</text>
+
+      <rect x="150" y="0" width="120" height="70" rx="8" fill="#1E3A5F"/>
+      <text x="160" y="92" font-size="12" fill="#16243F" font-weight="600">Slate Navy</text>
+      <text x="160" y="108" font-size="11" fill="#9aa3b2">#1E3A5F</text>
+
+      <rect x="300" y="0" width="120" height="70" rx="8" fill="#C9A24B"/>
+      <text x="310" y="92" font-size="12" fill="#16243F" font-weight="600">Gold</text>
+      <text x="310" y="108" font-size="11" fill="#9aa3b2">#C9A24B</text>
+
+      <rect x="450" y="0" width="120" height="70" rx="8" fill="#D9BC6A"/>
+      <text x="460" y="92" font-size="12" fill="#16243F" font-weight="600">Light Gold</text>
+      <text x="460" y="108" font-size="11" fill="#9aa3b2">#D9BC6A</text>
+
+      <rect x="600" y="0" width="120" height="70" rx="8" fill="#F7F8FA" stroke="#E2E6EC"/>
+      <text x="610" y="92" font-size="12" fill="#16243F" font-weight="600">Mist</text>
+      <text x="610" y="108" font-size="11" fill="#9aa3b2">#F7F8FA</text>
+    </g>
+  </g>
+</svg>
